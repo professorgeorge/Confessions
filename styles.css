@@ -1,7 +1,8 @@
 :root {
     --bg-color: #0f0f10;
     --text-color: #e0e0e0;
-    --accent-color: #cfaa6e; /* Antique Gold */
+    --accent-color: #cfaa6e;
+    --accent-gradient: linear-gradient(135deg, #d4af37 0%, #cfaa6e 50%, #b8956a 100%);
     --font-serif: 'Cinzel', serif;
     --font-hand: 'Cedarville Cursive', cursive;
     --font-body: 'Merriweather', serif;
@@ -20,11 +21,16 @@ body {
     overflow: hidden;
 }
 
-/* --- Typography --- */
-h1, h2, h3 {
+/* --- Typography with Enhancements --- */
+h1,
+h2,
+h3 {
     font-family: var(--font-serif);
     font-weight: 400;
-    color: var(--accent-color);
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     text-align: center;
 }
 
@@ -50,15 +56,60 @@ h1 {
     z-index: 10;
 }
 
-/* --- Visual Effects --- */
+/* --- Enhanced Visual Effects --- */
 .vignette {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: radial-gradient(circle, transparent 40%, #000 100%);
     pointer-events: none;
     z-index: 5;
 }
 
+/* Floating Particles */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(207, 170, 110, 0.3);
+    border-radius: 50%;
+    animation: float var(--float-duration, 20s) linear infinite;
+    opacity: 0;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-10vh) translateX(var(--float-x, 20px));
+        opacity: 0;
+    }
+}
+
+/* Breathing Candle Glow */
 .candle-glow {
     position: absolute;
     top: -50px;
@@ -67,15 +118,24 @@ h1 {
     width: 150px;
     height: 150px;
     background: radial-gradient(circle, rgba(255, 160, 50, 0.2) 0%, transparent 70%);
-    animation: flicker 4s infinite alternate;
+    animation: breathe 6s ease-in-out infinite;
 }
 
-@keyframes flicker {
-    0% { opacity: 0.8; transform: translateX(-50%) scale(1); }
-    100% { opacity: 0.5; transform: translateX(-50%) scale(1.05); }
+@keyframes breathe {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translateX(-50%) scale(1.1);
+    }
 }
 
-/* --- Views --- */
+/* --- Views with Transitions --- */
 .view-section {
     display: none;
     animation: fadeIn 1s ease-in-out;
@@ -85,13 +145,58 @@ h1 {
     display: block;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.view-section.fading-out {
+    animation: fadeToBlack 0.5s ease-out forwards;
 }
 
-/* --- Entry & Examination --- */
-.btn-primary, .btn-secondary {
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeToBlack {
+    to {
+        opacity: 0;
+        filter: brightness(0);
+    }
+}
+
+/* Cross Transition Icon */
+.transition-cross {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: var(--accent-color);
+    opacity: 0;
+    z-index: 50;
+    pointer-events: none;
+    animation: crossFade 1s ease-in-out;
+}
+
+@keyframes crossFade {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* --- Cards with Depth --- */
+.btn-primary,
+.btn-secondary {
     background: transparent;
     border: 1px solid var(--accent-color);
     color: var(--accent-color);
@@ -101,11 +206,13 @@ h1 {
     cursor: pointer;
     transition: all 0.3s ease;
     margin: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary:hover {
     background: rgba(207, 170, 110, 0.1);
-    box-shadow: 0 0 10px rgba(207, 170, 110, 0.3);
+    box-shadow: 0 0 20px rgba(207, 170, 110, 0.5);
+    transform: translateY(-2px);
 }
 
 .card {
@@ -113,13 +220,41 @@ h1 {
     padding: 2rem;
     border: 1px solid rgba(255, 255, 255, 0.05);
     margin-bottom: 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
 #exam-text {
     font-size: 1.2rem;
-    line-height: 1.6;
-    margin-bottom: 2rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
     min-height: 80px;
+}
+
+/* Why Prompt */
+.why-prompt {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: rgba(207, 170, 110, 0.7);
+    margin-top: 1rem;
+    line-height: 1.6;
+}
+
+/* Pause Button */
+.btn-pause {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 5px 15px;
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-pause:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
 }
 
 /* --- Confession Input --- */
@@ -149,19 +284,90 @@ textarea::placeholder {
     font-style: italic;
 }
 
-/* BURNING EFFECT */
+/* Confession Prompt */
+.confession-prompt {
+    font-size: 0.9rem;
+    font-style: italic;
+    color: rgba(207, 170, 110, 0.8);
+    margin-bottom: 1rem;
+}
+
+/* ENHANCED BURNING EFFECT with Embers */
 .dissolve {
-    transition: all 2s ease-out;
-    filter: blur(8px) grayscale(100%);
+    transition: all 4s ease-out;
+    filter: blur(12px) grayscale(100%);
     opacity: 0;
-    transform: translateY(-20px) scale(0.95);
+    transform: translateY(-30px) scale(0.92);
     color: #555;
 }
 
-/* --- Response --- */
+.ember {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(255, 100, 30, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: riseEmber 4s ease-out forwards;
+}
+
+@keyframes riseEmber {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100px) translateX(var(--ember-x, 20px));
+        opacity: 0;
+    }
+}
+
+/* --- Sacred Pause Screen --- */
+.breath-screen {
+    text-align: center;
+}
+
+.breath-instruction {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.8;
+}
+
+.heart-animation {
+    width: 60px;
+    height: 60px;
+    margin: 2rem auto;
+    background: var(--accent-gradient);
+    border-radius: 50%;
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: scale(1.15);
+        opacity: 1;
+    }
+}
+
+.timer-display {
+    font-size: 2rem;
+    font-family: var(--font-serif);
+    color: var(--accent-color);
+    margin-top: 1rem;
+}
+
+/* --- Response with Drop Caps --- */
 .psalm-container {
     margin-top: 1rem;
-    height: 350px; /* Fixed height for slideshow */
+    height: 350px;
     position: relative;
     display: flex;
     justify-content: center;
@@ -181,7 +387,7 @@ textarea::placeholder {
 .psalm-slide {
     font-family: var(--font-body);
     font-size: 1.25rem;
-    line-height: 2;
+    line-height: 2.2;
     color: #ffffff;
     text-align: center;
     transition: opacity 0.5s ease-in-out;
@@ -189,6 +395,87 @@ textarea::placeholder {
     width: 90%;
     margin: 0 auto;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Drop cap removed per user request
+.psalm-slide::first-letter {
+    font-size: 2.5em;
+    line-height: 0.8;
+    float: left;
+    margin: 0.1em 0.05em 0 0;
+    color: var(--accent-color);
+    font-family: var(--font-serif);
+}
+*/
+
+/* Commitment Step */
+.commitment-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(207, 170, 110, 0.3);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    padding: 15px;
+    margin-top: 1.5rem;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.commitment-input:focus {
+    border-color: var(--accent-color);
+}
+
+.action-suggestions {
+    text-align: left;
+    margin-top: 1.5rem;
+}
+
+.action-item {
+    padding: 10px 15px;
+    margin: 8px 0;
+    background: rgba(207, 170, 110, 0.1);
+    border-left: 3px solid var(--accent-color);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Completion Ritual */
+.candle-visual {
+    width: 120px;
+    height: 180px;
+    margin: 2rem auto;
+    position: relative;
+}
+
+.candle-body {
+    width: 60px;
+    height: 120px;
+    background: linear-gradient(to bottom, #f4e4c1, #d4c5a9);
+    margin: 0 auto;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.candle-flame {
+    width: 30px;
+    height: 50px;
+    background: radial-gradient(ellipse at center, #ffeb3b 0%, #ff9800 40%, transparent 70%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    margin: -10px auto 0;
+    animation: flameFlicker 1.5s ease-in-out infinite;
+}
+
+@keyframes flameFlicker {
+
+    0%,
+    100% {
+        transform: scaleY(1) skewX(0deg);
+    }
+
+    50% {
+        transform: scaleY(1.1) skewX(2deg);
+    }
 }
 
 /* The interactive TAP arrow */
@@ -223,16 +510,35 @@ textarea::placeholder {
 }
 
 @keyframes pulseRing {
-    0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); }
-    70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
 }
 
 /* Utility Animations */
-.fade-in { animation: fadeIn 1.5s ease-out; }
-.fade-in-delay { animation: fadeIn 2s ease-out 1s backwards; }
-.fade-in-delay-2 { animation: fadeIn 2s ease-out 2s backwards; }
-.fade-in-delay-3 { animation: fadeIn 2s ease-out 3s backwards; }
+.fade-in {
+    animation: fadeIn 1.5s ease-out;
+}
+
+.fade-in-delay {
+    animation: fadeIn 2s ease-out 1s backwards;
+}
+
+.fade-in-delay-2 {
+    animation: fadeIn 2s ease-out 2s backwards;
+}
+
+.fade-in-delay-3 {
+    animation: fadeIn 2s ease-out 3s backwards;
+}
 
 /* Credits Footer */
 .credits {
@@ -242,14 +548,14 @@ textarea::placeholder {
     text-align: center;
     font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.2);
-    pointer-events: none; /* Let clicks pass through */
+    pointer-events: none;
     z-index: 100;
 }
 
 .credits a {
     color: rgba(255, 255, 255, 0.2);
     text-decoration: none;
-    pointer-events: auto; /* Make link clickable */
+    pointer-events: auto;
 }
 
 .credits a:hover {
@@ -258,14 +564,33 @@ textarea::placeholder {
 
 /* --- Mobile Responsiveness --- */
 @media (max-width: 600px) {
-    h1 { font-size: 1.8rem; }
-    .container { padding: 1rem; width: 95%; }
-    .card { padding: 1rem; }
-    #exam-text { font-size: 1rem; }
-    textarea { font-size: 1.2rem; }
-    
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .container {
+        padding: 1rem;
+        width: 95%;
+    }
+
+    .card {
+        padding: 1rem;
+    }
+
+    #exam-text {
+        font-size: 1rem;
+    }
+
+    textarea {
+        font-size: 1.2rem;
+    }
+
     .psalm-slide {
         font-size: 1.1rem;
-        line-height: 1.6;
+        line-height: 1.8;
+    }
+
+    .psalm-slide::first-letter {
+        font-size: 2em;
     }
 }

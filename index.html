@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>The Quiet Confessional</title>
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f0f10">
@@ -14,17 +15,21 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Cinzel:wght@400;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Cinzel:wght@400;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
     <div class="vignette"></div>
-    
+    <div class="particles" id="particles"></div>
+
     <div class="container">
         <div class="candle-glow"></div>
-        
+
         <!-- View 1: Entry -->
         <div id="view-entry" class="view-section active">
             <h1>The Quiet Confessional</h1>
@@ -37,23 +42,36 @@
             <h2>Examination of Conscience</h2>
             <div id="exam-card" class="card">
                 <p id="exam-text">Loading...</p>
+                <p id="why-prompt" class="why-prompt" style="display: none;"></p>
             </div>
             <div class="controls">
+                <button id="btn-pause" class="btn-pause" onclick="app.pauseReflection()">Pause to Reflect</button>
                 <button class="btn-secondary" onclick="app.nextQuestion()">Next</button>
                 <button class="btn-primary" onclick="app.finishExamination()">Ready to Confess</button>
             </div>
         </div>
 
-        <!-- View 3: Confession -->
+        <!-- View 3: Sacred Pause/Breath -->
+        <div id="view-pause" class="view-section">
+            <div class="breath-screen">
+                <h2>Sacred Pause</h2>
+                <p class="breath-instruction">Take three slow breaths.<br>God already knows.<br>This is for you.</p>
+                <div class="heart-animation"></div>
+                <div class="timer-display" id="pause-timer">10</div>
+            </div>
+        </div>
+
+        <!-- View 4: Confession -->
         <div id="view-confession" class="view-section">
             <h2>Unburden Yourself</h2>
-            <div class="card">
+            <p class="confession-prompt">Watch your burden transform...</p>
+            <div class="card" id="confession-card">
                 <textarea id="confession-input" class="handwritten" placeholder="Speak your truth..."></textarea>
             </div>
             <button class="btn-primary" onclick="app.submitConfession()">Release</button>
         </div>
 
-        <!-- View 4: Response -->
+        <!-- View 5: Response/Psalm -->
         <div id="view-response" class="view-section">
             <div class="response-content">
                 <h2 class="fade-in">Your burden is lifted.</h2>
@@ -63,22 +81,44 @@
                         <!-- Content injected via JS -->
                     </div>
                 </div>
-
-                <button id="btn-restart" class="btn-primary fade-in-delay-3" 
-                    style="opacity: 0; pointer-events: none; transition: opacity 1s;"
-                    onclick="app.reset()">Amen</button>
             </div>
+        </div>
+
+        <!-- View 6: Commitment -->
+        <div id="view-commitment" class="view-section">
+            <h2>Carry This Forward</h2>
+            <p style="margin-bottom: 1.5rem; line-height: 1.8;">Transformation requires action.<br>What will you do
+                differently tomorrow?</p>
+
+
+
+            <input type="text" id="commitment-input" class="commitment-input"
+                placeholder="Name one concrete step... (optional)">
+
+            <button class="btn-primary" onclick="app.completeJourney()" style="margin-top: 2rem;">Continue</button>
+        </div>
+
+        <!-- View 7: Completion Ritual -->
+        <div id="view-completion" class="view-section">
+            <div class="candle-visual">
+                <div class="candle-flame"></div>
+                <div class="candle-body"></div>
+            </div>
+            <h2>You are forgiven.</h2>
+            <p style="line-height: 1.8; margin: 1.5rem 0;">You are renewed.<br>Carry this light forward.</p>
         </div>
 
     </div>
 
     <!-- Credits -->
     <div class="credits">
-        Developed with divine inspiration by <a href="https://www.linkedin.com/in/babu-george/" target="_blank">Babu George</a>
+        Developed with divine inspiration by <a href="https://www.linkedin.com/in/babu-george/" target="_blank">Babu
+            George</a>
     </div>
 
     <!-- Logic -->
     <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
+
 </html>

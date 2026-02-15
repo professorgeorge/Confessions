@@ -2,23 +2,48 @@
 const state = {
     examIndex: 0,
     psalmStanzas: [],
-    psalmIndex: 0
+    psalmIndex: 0,
+    audio: new Audio('assets/ambient_chant.mp3'),
+    confessionText: '',
+    confessionTopic: null,
+    isPaused: false
 };
+
+// Audio Setup
+state.audio.loop = true;
+state.audio.volume = 0.5;
 
 // DOM Elements
 const elements = {
     examCard: document.getElementById('exam-card'),
     examText: document.getElementById('exam-text'),
-    confessionInput: document.getElementById('confession-input')
+    whyPrompt: document.getElementById('why-prompt'),
+    confessionInput: document.getElementById('confession-input'),
+    confessionCard: document.getElementById('confession-card')
 };
 
 // INIT
-window.addEventListener('scroll', (e) => { e.preventDefault(); }, { passive: false }); // Lock scroll
+window.addEventListener('scroll', (e) => { e.preventDefault(); }, { passive: false });
 
-// *** SERVICE WORKER REGISTRATION (UPDATED) ***
+// Create Floating Particles
+function createParticles() {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.setProperty('--float-duration', (15 + Math.random() * 10) + 's');
+        particle.style.setProperty('--float-x', (Math.random() * 40 - 20) + 'px');
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        container.appendChild(particle);
+    }
+}
+
+createParticles();
+
+// PWA Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // Explicitly registering with the repository path scope
         navigator.serviceWorker.register('/Quiet-Confessions/sw.js', { scope: '/Quiet-Confessions/' })
             .then(reg => console.log('SW Registered!', reg))
             .catch(err => console.log('SW Failed', err));
@@ -28,60 +53,146 @@ if ('serviceWorker' in navigator) {
 // App Logic
 const app = {
     startExamination: () => {
-        switchView('examination');
-        app.showQuestion();
+        // Play audio BEFORE transition to ensure it starts
+        state.audio.play().catch(err => console.log("Audio play failed:", err));
+        transitionWithCross('examination');
+        // showQuestion will be called after transition completes
+        setTimeout(() => app.showQuestion(), 600);
+    },
+
+    playAudio: () => {
+        state.audio.play().catch(err => console.log("Audio play failed:", err));
     },
 
     showQuestion: () => {
+        const q = EXAMINATION_QUESTIONS[state.examIndex];
         elements.examText.style.opacity = 0;
+        elements.whyPrompt.style.opacity = 0;
+
         setTimeout(() => {
-            elements.examText.textContent = EXAMINATION_QUESTIONS[state.examIndex];
+            elements.examText.textContent = q.q;
+            elements.whyPrompt.textContent = q.why;
+            elements.whyPrompt.style.display = 'block';
             elements.examText.style.opacity = 1;
+            setTimeout(() => elements.whyPrompt.style.opacity = 1, 500);
+
+            // Hide Next button if at last question
+            const nextBtn = document.querySelector('.btn-secondary');
+            if (state.examIndex === EXAMINATION_QUESTIONS.length - 1) {
+                nextBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'inline-block';
+            }
         }, 300);
     },
 
     nextQuestion: () => {
-        state.examIndex++;
-        if (state.examIndex >= EXAMINATION_QUESTIONS.length) {
-            state.examIndex = 0; // Loop or finish
+        console.log('Current index:', state.examIndex, 'Total questions:', EXAMINATION_QUESTIONS.length);
+        if (state.examIndex < EXAMINATION_QUESTIONS.length - 1) {
+            state.examIndex++;
+            app.showQuestion();
+        } else {
+            console.log('At last question - no more next');
         }
-        app.showQuestion();
+    },
+
+    pauseReflection: () => {
+        if (state.isPaused) return;
+        state.isPaused = true;
+
+        const currentView = document.querySelector('.view-section.active');
+        currentView.style.opacity = 0.3;
+        document.getElementById('btn-pause').textContent = 'Reflecting...';
+        document.getElementById('btn-pause').style.pointerEvents = 'none';
+
+        setTimeout(() => {
+            currentView.style.opacity = 1;
+            document.getElementById('btn-pause').textContent = 'Pause to Reflect';
+            document.getElementById('btn-pause').style.pointerEvents = 'auto';
+            state.isPaused = false;
+        }, 10000);
     },
 
     finishExamination: () => {
-        switchView('confession');
+        // Show sacred pause before confession
+        transitionWithCross('pause');
+        startSacredPause();
     },
 
     submitConfession: () => {
         const text = elements.confessionInput.value.trim();
-        if (!text) return; // Don't submit empty
+        if (!text) return;
 
-        // VISUAL EFFECT: BURNING/DISSOLVING
+        state.confessionText = text;
+        state.confessionTopic = findTopic(text.toLowerCase());
+
+        // Create ember effect
+        createEmbers();
+
+        // SLOWED DISSOLVE: 4 seconds
         elements.confessionInput.classList.add('dissolve');
 
-        // Logic
-        const topic = findTopic(text.toLowerCase());
-
-        // Wait for animation (2s)
         setTimeout(() => {
-            setupPsalmResponse(topic);
-            switchView('response');
+            setupPsalmResponse(state.confessionTopic);
+            transitionWithCross('response');
 
-            // Clean up input after view switch
             setTimeout(() => {
                 elements.confessionInput.value = '';
                 elements.confessionInput.classList.remove('dissolve');
             }, 1000);
-        }, 2000);
+        }, 4000); // Changed from 2s to 4s
+    },
+
+    showCommitment: () => {
+        transitionWithCross('commitment');
+    },
+
+    completeJourney: () => {
+        const commitment = document.getElementById('commitment-input').value.trim();
+        if (commitment) {
+            console.log('User commitment:', commitment);
+        }
+
+        transitionWithCross('completion');
+
+        // Auto-return after 3 seconds
+        setTimeout(() => {
+            document.getElementById('commitment-input').value = '';
+            state.examIndex = 0;
+            state.confessionText = '';
+            transitionWithCross('entry');
+        }, 3000);
     },
 
     reset: () => {
         state.examIndex = 0;
-        switchView('entry');
+        transitionWithCross('entry');
     }
 };
 
 // Utilities
+function transitionWithCross(viewName) {
+    const current = document.querySelector('.view-section.active');
+
+    // Fade to black
+    current.classList.add('fading-out');
+
+    setTimeout(() => {
+        // Show cross
+        const cross = document.createElement('div');
+        cross.className = 'transition-cross';
+        cross.innerHTML = '✝';
+        document.body.appendChild(cross);
+
+        setTimeout(() => cross.remove(), 1000);
+    }, 250);
+
+    setTimeout(() => {
+        switchView(viewName);
+        current.classList.remove('fading-out');
+    }, 500);
+}
+
 function switchView(viewName) {
     document.querySelectorAll('.view-section').forEach(el => {
         el.classList.remove('active');
@@ -97,53 +208,77 @@ function findTopic(text) {
             return topic;
         }
     }
-    return SCRIPTURE_TOPICS[SCRIPTURE_TOPICS.length - 1]; // Default
+    return SCRIPTURE_TOPICS[SCRIPTURE_TOPICS.length - 1];
+}
+
+function createEmbers() {
+    const card = elements.confessionCard;
+    for (let i = 0; i < 12; i++) {
+        const ember = document.createElement('div');
+        ember.className = 'ember';
+        ember.style.left = (Math.random() * 100) + '%';
+        ember.style.top = '50%';
+        ember.style.setProperty('--ember-x', (Math.random() * 60 - 30) + 'px');
+        ember.style.animationDelay = (i * 0.3) + 's';
+        card.appendChild(ember);
+
+        setTimeout(() => ember.remove(), 4500);
+    }
+}
+
+function startSacredPause() {
+    let timeLeft = 10;
+    const timerDisplay = document.getElementById('pause-timer');
+
+    const interval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            setTimeout(() => {
+                transitionWithCross('confession');
+            }, 500);
+        }
+    }, 1000);
 }
 
 function setupPsalmResponse(topic) {
-    // 1. Prepare Stanzas
     const stanzas = PSALM_TEXT.split('\n\n').filter(s => s.trim().length > 0);
 
-    // Add specific verse first
     stanzas.unshift(`"${topic.verse}"\n— ${topic.ref}`);
-    // Add closing
     stanzas.push("Go in peace.");
 
     state.psalmStanzas = stanzas;
     state.psalmIndex = 0;
 
-    // 2. Setup Container
     const container = document.getElementById('psalm-content');
     container.innerHTML = '';
 
-    // Slide Element
     const slide = document.createElement('div');
     slide.id = 'current-psalm-slide';
     slide.className = 'psalm-slide fade-in';
     container.appendChild(slide);
 
-    // Navigation Cue
     const cue = document.createElement('div');
     cue.className = 'tap-indicator';
     container.appendChild(cue);
     setTimeout(() => cue.style.opacity = 1, 1000);
 
-    // 3. Render Initial
     showPsalmSlide();
 
-    // 4. Interaction
     cue.onclick = (e) => {
         e.stopPropagation();
         state.psalmIndex++;
         if (state.psalmIndex < state.psalmStanzas.length) {
             showPsalmSlide();
 
-            // Last slide check
             if (state.psalmIndex === state.psalmStanzas.length - 1) {
                 cue.style.display = 'none';
-                const btn = document.getElementById('btn-restart');
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'all';
+                // After last psalm, show commitment
+                setTimeout(() => {
+                    app.showCommitment();
+                }, 3000);
             }
         } else {
             cue.style.display = 'none';
