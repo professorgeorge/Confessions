@@ -1,0 +1,271 @@
+:root {
+    --bg-color: #0f0f10;
+    --text-color: #e0e0e0;
+    --accent-color: #cfaa6e; /* Antique Gold */
+    --font-serif: 'Cinzel', serif;
+    --font-hand: 'Cedarville Cursive', cursive;
+    --font-body: 'Merriweather', serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* --- Typography --- */
+h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    color: var(--accent-color);
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+}
+
+.handwritten {
+    font-family: var(--font-hand);
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+/* --- Layout --- */
+.container {
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+    z-index: 10;
+}
+
+/* --- Visual Effects --- */
+.vignette {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, transparent 40%, #000 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.candle-glow {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(255, 160, 50, 0.2) 0%, transparent 70%);
+    animation: flicker 4s infinite alternate;
+}
+
+@keyframes flicker {
+    0% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+    100% { opacity: 0.5; transform: translateX(-50%) scale(1.05); }
+}
+
+/* --- Views --- */
+.view-section {
+    display: none;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.view-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- Entry & Examination --- */
+.btn-primary, .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 10px 30px;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 10px;
+}
+
+.btn-primary:hover {
+    background: rgba(207, 170, 110, 0.1);
+    box-shadow: 0 0 10px rgba(207, 170, 110, 0.3);
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 2rem;
+}
+
+#exam-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    min-height: 80px;
+}
+
+/* --- Confession Input --- */
+textarea {
+    width: 100%;
+    height: 150px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-family: var(--font-hand);
+    font-size: 1.5rem;
+    padding: 10px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+textarea:focus {
+    border-color: var(--accent-color);
+}
+
+textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-style: italic;
+}
+
+/* BURNING EFFECT */
+.dissolve {
+    transition: all 2s ease-out;
+    filter: blur(8px) grayscale(100%);
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    color: #555;
+}
+
+/* --- Response --- */
+.psalm-container {
+    margin-top: 1rem;
+    height: 350px; /* Fixed height for slideshow */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.psalm-slideshow {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.psalm-slide {
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    line-height: 2;
+    color: #ffffff;
+    text-align: center;
+    transition: opacity 0.5s ease-in-out;
+    max-width: 600px;
+    width: 90%;
+    margin: 0 auto;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* The interactive TAP arrow */
+.tap-indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: pulseRing 3s infinite;
+    pointer-events: auto;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 1s, background 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tap-indicator::after {
+    content: '→';
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.2rem;
+}
+
+.tap-indicator:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+@keyframes pulseRing {
+    0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+/* Utility Animations */
+.fade-in { animation: fadeIn 1.5s ease-out; }
+.fade-in-delay { animation: fadeIn 2s ease-out 1s backwards; }
+.fade-in-delay-2 { animation: fadeIn 2s ease-out 2s backwards; }
+.fade-in-delay-3 { animation: fadeIn 2s ease-out 3s backwards; }
+
+/* Credits Footer */
+.credits {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.2);
+    pointer-events: none; /* Let clicks pass through */
+    z-index: 100;
+}
+
+.credits a {
+    color: rgba(255, 255, 255, 0.2);
+    text-decoration: none;
+    pointer-events: auto; /* Make link clickable */
+}
+
+.credits a:hover {
+    color: var(--accent-color);
+}
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 600px) {
+    h1 { font-size: 1.8rem; }
+    .container { padding: 1rem; width: 95%; }
+    .card { padding: 1rem; }
+    #exam-text { font-size: 1rem; }
+    textarea { font-size: 1.2rem; }
+    
+    .psalm-slide {
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+}

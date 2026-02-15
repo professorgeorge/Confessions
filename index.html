@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Quiet Confessional</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f0f10">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&family=Cinzel:wght@400;600&family=Merriweather:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="vignette"></div>
+    
+    <div class="container">
+        <div class="candle-glow"></div>
+        
+        <!-- View 1: Entry -->
+        <div id="view-entry" class="view-section active">
+            <h1>The Quiet Confessional</h1>
+            <p style="opacity: 0.7; font-style: italic; margin-bottom: 3rem;">A space for burden and release.</p>
+            <button class="btn-primary" onclick="app.startExamination()">Begin Examination</button>
+        </div>
+
+        <!-- View 2: Examination -->
+        <div id="view-examination" class="view-section">
+            <h2>Examination of Conscience</h2>
+            <div id="exam-card" class="card">
+                <p id="exam-text">Loading...</p>
+            </div>
+            <div class="controls">
+                <button class="btn-secondary" onclick="app.nextQuestion()">Next</button>
+                <button class="btn-primary" onclick="app.finishExamination()">Ready to Confess</button>
+            </div>
+        </div>
+
+        <!-- View 3: Confession -->
+        <div id="view-confession" class="view-section">
+            <h2>Unburden Yourself</h2>
+            <div class="card">
+                <textarea id="confession-input" class="handwritten" placeholder="Speak your truth..."></textarea>
+            </div>
+            <button class="btn-primary" onclick="app.submitConfession()">Release</button>
+        </div>
+
+        <!-- View 4: Response -->
+        <div id="view-response" class="view-section">
+            <div class="response-content">
+                <h2 class="fade-in">Your burden is lifted.</h2>
+
+                <div class="psalm-container fade-in-delay">
+                    <div id="psalm-content" class="psalm-slideshow">
+                        <!-- Content injected via JS -->
+                    </div>
+                </div>
+
+                <button id="btn-restart" class="btn-primary fade-in-delay-3" 
+                    style="opacity: 0; pointer-events: none; transition: opacity 1s;"
+                    onclick="app.reset()">Amen</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Credits -->
+    <div class="credits">
+        Developed with divine inspiration by <a href="https://www.linkedin.com/in/babu-george/" target="_blank">Babu George</a>
+    </div>
+
+    <!-- Logic -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
